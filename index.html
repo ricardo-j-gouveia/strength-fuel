@@ -653,3 +653,327 @@ function buildMeals(prefs, adjustment) {
       lunch = `${protein.label} + ${carb.name} (${carb.portion}) + ${veg}`;
       if (has("oliveoil")) lunch += ` + olive oil`;
       if (allowChickpeas && (veg.includes("salad") || veg.includes("salad leaves"))) lunch += ` + chickpeas (optional fibre)`;
+    } else {
+      lunch = `Select at least 1 lunch protein + 1 carb + 1 veg in the builder.`;
+    }
+
+    // Snack 2 (whey/fruit OR yoghurt)
+    let snack2 = "";
+    if (has("whey") && has("bananas")) {
+      snack2 = `Whey shake + banana`;
+    } else if (has("yoghurt")) {
+      snack2 = `Greek yoghurt`;
+      if (has("nuts")) snack2 += ` + nuts`;
+    } else if (prefs.proteins.eggs) {
+      snack2 = `2 eggs + fruit (if selected)`;
+    } else {
+      snack2 = `Pick whey and/or yoghurt for a reliable protein snack.`;
+    }
+
+    meals.push({ day, breakfast, snack1, lunch, snack2 });
+  }
+
+  return meals;
+}
+
+/* =========================
+   SHOPPING LIST GENERATION
+========================= */
+function buildShoppingFromMeals(prefs, meals, adjustment) {
+  const core = new Set();
+  const qty = [];
+
+  // Add pantry + protein items actually selected
+  const enabledProteins = pickEnabled(proteinOptions, prefs.proteins, prefs.avoidChickenToggle);
+  const enabledPantry = pantryOptions.filter(x => prefs.pantry[x.id]);
+
+  // Always include selected pantry items (since plan is built from them)
+  enabledPantry.forEach(x => core.add(x.tesco));
+
+  // Include selected lunch proteins
+  enabledProteins.forEach(x => core.add(x.tesco));
+
+  // Custom items
+  loadCustom().forEach(x => core.add(x));
+
+  // Practical quantity notes (simple, readable)
+  const days = meals.length;
+
+  // Oats note
+  if (prefs.pantry.oats) {
+    const oatsPerDay = Math.max(40, 80 + adjustment.deltaOats);
+    qty.push(`Oats: ~${oatsPerDay}g/day × ${days} = ~${oatsPerDay*days}g (1kg bag usually fine)`);
+  }
+  // Tuna note (if used)
+  if (prefs.proteins.tuna) {
+    // snack1 uses tuna sandwich most days if bread also enabled
+    const tunaDays = meals.filter(m => (m.snack1 || "").toLowerCase().includes("tuna")).length;
+    if (tunaDays > 0) qty.push(`Tuna: ~${tunaDays} cans (buy a 4-pack for 4–5 days)`);
+  }
+  // Bread note
+  if (prefs.pantry.bread) {
+    const breadMeals = meals.filter(m => (m.snack1||"").toLowerCase().includes("sandwich")).length;
+    const slices = breadMeals * 2 + (prefs.pantry.oats ? 0 : days*2);
+    qty.push(`Wholemeal bread: ~${Math.max(8, slices)} slices (1 loaf covers it)`);
+  }
+  // Rice/quinoa/couscous notes
+  const lunchCarbText = (adjustment.deltaLunchCarb !== 0)
+    ? `Lunch carbs adjusted by ${adjustment.deltaLunchCarb > 0 ? "+" : ""}${adjustment.deltaLunchCarb}g dry per lunch`
+    : "Lunch carb portions steady";
+  qty.push(lunchCarbText);
+
+  // Veg notes
+  if (prefs.pantry.spinach) qty.push(`Spinach: 1 bag usually enough for 4–5 days`);
+  if (prefs.pantry.salad) qty.push(`Salad leaves: 1 bag usually enough for 4–5 days`);
+  if (prefs.pantry.broccoli) qty.push(`Broccoli: 1–2 packs depending on portions`);
+
+  // Yoghurt/nuts
+  if (prefs.pantry.yoghurt) qty.push(`Greek yoghurt: 1 × 500g tub is a good base`);
+  if (prefs.pantry.nuts) qty.push(`Mixed nuts: 200g bag covers snacks easily`);
+
+  // Fibre add-ons
+  if (prefs.includeGutAddons === "yes" && prefs.pantry.berries) qty.push(`Berries: 300–500g frozen bag is plenty`);
+  if (prefs.includeGutAddons === "yes" && prefs.pantry.chickpeas) qty.push(`Chickpeas/beans: 1 can is enough for optional add-ons`);
+
+  // Supplements
+  if (prefs.pantry.creatine) qty.push(`Creatine: 3–5g/day (buy tub)`);
+  if (prefs.pantry.wellman) qty.push(`Multivitamin: as per label`);
+
+  return { core: Array.from(core).sort(), qty };
+}
+
+/* =========================
+   RENDERERS
+========================= */
+function renderMeals(meals) {
+  const body = document.getElementById("mealBody");
+  body.innerHTML = "";
+  meals.forEach(m => {
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td><strong>${m.day}</strong></td>
+      <td>${escapeHTML(m.breakfast)}</td>
+      <td>${escapeHTML(m.snack1)}</td>
+      <td>${escapeHTML(m.lunch)}</td>
+      <td>${escapeHTML(m.snack2)}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+function renderWarnings(list) {
+  const wrap = document.getElementById("warnings");
+  if (!list.length) { wrap.innerHTML = ""; return; }
+  wrap.innerHTML = `<p class="status-warn">Builder warnings:</p><ul>${list.map(x => `<li>${escapeHTML(x)}</li>`).join("")}</ul>`;
+}
+
+function renderReadings() {
+  const out = document.getElementById("readingsOut");
+  const readings = loadReadings();
+  if (!readings.length) { out.innerHTML = "<p class='muted'>No readings saved yet.</p>"; return; }
+
+  const rows = readings
+    .sort((a,b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 10)
+    .map(r => {
+      const d = new Date(r.date);
+      const dStr = d.toLocaleDateString("en-GB", { year:"numeric", month:"short", day:"2-digit" });
+      const bfStr = (r.bf === null || r.bf === undefined) ? "—" : `${r.bf}%`;
+      return `<div>• <strong>${dStr}</strong>: ${r.weight.toFixed(1)} kg <span class="muted">(BF: ${bfStr})</span></div>`;
+    }).join("");
+
+  out.innerHTML = rows + (readings.length > 10 ? "<p class='muted small'>Showing latest 10 readings.</p>" : "");
+}
+
+function renderTrendAndAdjustment(prefs) {
+  const readings = loadReadings();
+  const trend = computeWeeklyTrend(readings);
+  const decision = decideAdjustment(trend, prefs.goalMode);
+
+  const trendOut = document.getElementById("trendOut");
+  const adjustmentOut = document.getElementById("adjustmentOut");
+
+  if (!trend.ok) {
+    trendOut.innerHTML = `<span class="status-warn">Trend:</span> Not computed — ${escapeHTML(trend.reason)}`;
+  } else {
+    const cls = (trend.kgPerWeek < TARGET_MIN) ? "status-bad" : (trend.kgPerWeek > TARGET_MAX) ? "status-warn" : "status-ok";
+    trendOut.innerHTML = `<span class="${cls}">Trend:</span> ${trend.kgPerWeek.toFixed(2)} kg/week • ${trend.points} readings • ${trend.spanDays} days`;
+  }
+
+  let statusClass = "status-ok";
+  if (decision.status === "increase") statusClass = "status-bad";
+  if (decision.status === "decrease" || decision.status === "hold") statusClass = "status-warn";
+
+  adjustmentOut.innerHTML = `<span class="${statusClass}">Plan Adjustment:</span> ${escapeHTML(decision.label)} — <span class="muted">${escapeHTML(decision.details)}</span>`;
+  return decision;
+}
+
+function renderShopping() {
+  const prefs = readUIToPrefs();
+  const decision = renderTrendAndAdjustment(prefs);
+
+  // Use last generated meals if available, otherwise generate now
+  let meals;
+  try {
+    meals = JSON.parse(localStorage.getItem(LAST_PLAN_KEY) || "null");
+  } catch { meals = null; }
+  if (!meals || !Array.isArray(meals)) {
+    meals = buildMeals(prefs, decision);
+    localStorage.setItem(LAST_PLAN_KEY, JSON.stringify(meals));
+  }
+
+  const list = buildShoppingFromMeals(prefs, meals, decision);
+
+  const coreEl = document.getElementById("shoppingCore");
+  const qtyEl  = document.getElementById("shoppingQty");
+  coreEl.innerHTML = "";
+  qtyEl.innerHTML = "";
+
+  list.core.forEach(item => {
+    const li = document.createElement("li");
+    li.textContent = item;
+    coreEl.appendChild(li);
+  });
+
+  list.qty.forEach(note => {
+    const li = document.createElement("li");
+    li.textContent = note;
+    qtyEl.appendChild(li);
+  });
+}
+
+function copyShopping() {
+  const coreItems = Array.from(document.querySelectorAll("#shoppingCore li")).map(li => li.textContent);
+  const qtyItems  = Array.from(document.querySelectorAll("#shoppingQty li")).map(li => li.textContent);
+
+  const text =
+`TESCO SHOPPING LIST (Generated)
+
+CORE:
+${coreItems.map(x => `• ${x}`).join("\n")}
+
+NOTES / QUANTITIES:
+${qtyItems.map(x => `• ${x}`).join("\n")}
+`;
+
+  navigator.clipboard.writeText(text)
+    .then(() => {
+      const el = document.getElementById("copyOut");
+      el.textContent = "Copied ✅";
+      setTimeout(() => el.textContent = "", 2000);
+    })
+    .catch(() => {
+      const el = document.getElementById("copyOut");
+      el.textContent = "Copy failed — clipboard blocked by browser.";
+    });
+}
+
+/* =========================
+   READ UI → PREFS
+========================= */
+function readUIToPrefs() {
+  const p = loadPrefs();
+  p.daysCount = parseInt(document.getElementById("daysCount").value, 10);
+  p.goalMode = document.getElementById("goalMode").value;
+  p.includeGutAddons = document.getElementById("includeGutAddons").value;
+  p.avoidChickenToggle = document.getElementById("avoidChickenToggle").value;
+
+  // Apply hard chicken rule immediately to checkbox if needed
+  if (p.avoidChickenToggle === "avoid") {
+    p.proteins.chicken = false;
+    const c = document.getElementById("prot_chicken");
+    if (c) c.checked = false;
+  }
+
+  savePrefs(p);
+  return p;
+}
+
+/* =========================
+   MAIN GENERATION
+========================= */
+function generateAll() {
+  const prefs = readUIToPrefs();
+  const decision = renderTrendAndAdjustment(prefs);
+
+  // Gut add-ons auto behaviour: if includeGutAddons=no, uncheck berries/chickpeas
+  if (prefs.includeGutAddons === "no") {
+    prefs.pantry.berries = false;
+    prefs.pantry.chickpeas = false;
+    savePrefs(prefs);
+    // update UI toggles
+    const b = document.getElementById("pan_berries"); if (b) b.checked = false;
+    const c = document.getElementById("pan_chickpeas"); if (c) c.checked = false;
+  }
+
+  const warnings = ensure(prefs);
+  renderWarnings(warnings);
+
+  const meals = buildMeals(prefs, decision);
+  renderMeals(meals);
+
+  localStorage.setItem(LAST_PLAN_KEY, JSON.stringify(meals));
+  renderShopping();
+
+  document.getElementById("genStatus").textContent = `Generated ${meals.length} days using your selected proteins/pantry.`;
+}
+
+/* =========================
+   STATS ACTIONS
+========================= */
+function addReading() {
+  const w = parseFloat(document.getElementById("weight").value);
+  const bfRaw = document.getElementById("bodyfat").value;
+  let bf = (bfRaw === "" ? null : parseFloat(bfRaw));
+
+  if (!Number.isFinite(w) || w <= 0) {
+    document.getElementById("adjustmentOut").innerHTML = "<span class='status-bad'>Please enter a valid weight.</span>";
+    return;
+  }
+
+  const readings = loadReadings();
+  if (bf === null) {
+    const lastBF = lastSavedBF(readings);
+    if (lastBF !== null) bf = lastBF;
+  }
+
+  readings.push({ date: new Date().toISOString(), weight: w, bf: (Number.isFinite(bf) ? bf : null) });
+  saveReadings(readings);
+
+  document.getElementById("weight").value = "";
+  document.getElementById("bodyfat").value = "";
+
+  renderReadings();
+  generateAll();
+}
+
+function resetReadings() {
+  localStorage.removeItem(STORAGE_KEY);
+  renderReadings();
+  generateAll();
+}
+
+/* =========================
+   HELPERS
+========================= */
+function escapeHTML(s) {
+  return String(s || "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+/* =========================
+   INIT
+========================= */
+(function boot() {
+  initUI();
+  renderReadings();
+  generateAll();
+})();
+</script>
+
+</body>
+</html>
