@@ -6,121 +6,91 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    body { font-family: Arial, sans-serif; margin: 0; background: #f7f7f7; }
-    header { background: #111; color: #fff; padding: 1rem; text-align: center; }
-    main { max-width: 1000px; margin: auto; padding: 1rem; }
-    section { background: #fff; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
-    h2 { margin-top: 0; }
-    label { display: block; margin: .4rem 0; }
-    button { padding: .6rem 1rem; background: #111; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ccc; padding: .5rem; text-align: left; }
-    th { background: #eee; }
-    ul { margin-left: 1.2rem; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f7f7f7; color:#111; }
+    header { background:#111; color:#fff; padding:1rem; text-align:center; }
+    header h1 { margin:0 0 .35rem 0; }
+    header p { margin:0; opacity:.9; }
+    main { max-width: 1100px; margin: 0 auto; padding: 1rem; }
+    section { background:#fff; border:1px solid #ddd; border-radius:10px; padding:1rem; margin-bottom:1rem; }
+    h2 { margin-top:0; }
+    h3 { margin:.25rem 0 .6rem 0; }
+    .sub { color:#555; margin-top:-.4rem; }
+    .grid { display:grid; grid-template-columns: repeat(12, 1fr); gap: .8rem; }
+    .col-12 { grid-column: span 12; }
+    .col-6 { grid-column: span 6; }
+    .col-4 { grid-column: span 4; }
+    .col-3 { grid-column: span 3; }
+    @media (max-width: 900px){ .col-6,.col-4,.col-3 { grid-column: span 12; } }
+    label { display:block; margin:.35rem 0; }
+    .checkgrid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap:.45rem .8rem; }
+    @media (max-width: 900px){ .checkgrid { grid-template-columns: 1fr; } }
+    .check { display:flex; gap:.55rem; align-items:flex-start; padding:.45rem .55rem; border:1px solid #ddd; border-radius:10px; background:#fafafa; }
+    .check input { margin-top:.2rem; }
+    .muted { color:#666; }
+    .small { font-size:.92rem; }
+    .row { display:flex; gap:.6rem; align-items:center; flex-wrap:wrap; }
+    select, input[type="text"], input[type="number"] {
+      width:100%; padding:.55rem .6rem; border:1px solid #ddd; border-radius:8px; font-size:1rem;
+    }
+    button { padding:.6rem .9rem; background:#111; color:#fff; border:0; border-radius:8px; cursor:pointer; font-weight:700; }
+    button.ghost { background:transparent; color:#111; border:1px solid #ddd; }
+    button.secondary { background:#444; }
+    table { width:100%; border-collapse:collapse; }
+    th, td { border:1px solid #ddd; padding:.6rem; text-align:left; vertical-align:top; }
+    th { background:#eee; }
+    ul { margin:.35rem 0 0 1.2rem; }
+    .hr { height:1px; background:#ddd; margin:.9rem 0; }
+    .pill { display:inline-block; padding:.2rem .55rem; border:1px solid #ddd; border-radius:999px; background:#fafafa; font-size:.85rem; }
+    .status-warn { color:#a85b00; font-weight:700; }
+    .status-ok { color:#0a7a2f; font-weight:700; }
+    .status-bad { color:#b00020; font-weight:700; }
+    footer { text-align:center; color:#666; padding: 1rem 0 2rem; }
   </style>
 </head>
 
 <body>
 <header>
   <h1>Strength Fuel</h1>
-  <p>Tesco-only • Lean mass gain • Fibre-first</p>
+  <p>Tesco-only • Lean mass gain • Fibre-first • Mon–Fri plan (no dinners)</p>
 </header>
 
 <main>
 
-<section>
-  <h2>Select meats (used for lunches)</h2>
+  <section>
+    <h2>Plan Builder</h2>
+    <p class="sub small">
+      Tick what you want available. The generator uses only what you select.
+      <span class="pill">Mon–Fri</span> <span class="pill">Breakfast + Snacks + Lunch</span>
+    </p>
 
-  <label><input type="checkbox" id="beef" checked> Beef (5% mince)</label>
-  <label><input type="checkbox" id="pork"> Pork (loin/steaks)</label>
-  <label><input type="checkbox" id="duck"> Duck breast</label>
-  <label><input type="checkbox" id="chicken"> Chicken breast</label>
-  <label><input type="checkbox" id="fish" checked> Fish (cod/salmon)</label>
+    <div class="grid">
+      <div class="col-3">
+        <label for="daysCount"><strong>Days</strong></label>
+        <select id="daysCount">
+          <option value="5" selected>5 days (Mon–Fri)</option>
+          <option value="4">4 days</option>
+        </select>
+      </div>
 
-  <br>
-  <button onclick="generate()">Generate meal plan</button>
-</section>
+      <div class="col-3">
+        <label for="avoidChicken"><strong>Chicken rule</strong></label>
+        <select id="avoidChicken">
+          <option value="avoid" selected>Avoid chicken (default)</option>
+          <option value="allow">Allow if selected</option>
+        </select>
+      </div>
 
-<section>
-  <h2>Meal plan (Monday–Friday, no dinners)</h2>
+      <div class="col-3">
+        <label for="includeFibre"><strong>Fibre add-ons</strong></label>
+        <select id="includeFibre">
+          <option value="yes" selected>Include berries + beans (recommended)</option>
+          <option value="no">Exclude</option>
+        </select>
+      </div>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Day</th>
-        <th>Lunch</th>
-      </tr>
-    </thead>
-    <tbody id="meals"></tbody>
-  </table>
-</section>
+      <div class="col-3">
+        <label>&nbsp;</label>
+        <button id="generateBtn">Generate plan + shopping</button>
+      </div>
+    </div>
 
-<section>
-  <h2>Tesco shopping list</h2>
-  <ul id="shopping"></ul>
-</section>
-
-</main>
-
-<script>
-function generate() {
-  var meats = [];
-
-  if (document.getElementById("beef").checked)
-    meats.push("Tesco 5% Fat Beef Mince");
-
-  if (document.getElementById("pork").checked)
-    meats.push("Tesco Pork Loin Steaks");
-
-  if (document.getElementById("duck").checked)
-    meats.push("Tesco Duck Breast Fillets");
-
-  if (document.getElementById("chicken").checked)
-    meats.push("Tesco Chicken Breast Fillets");
-
-  if (document.getElementById("fish").checked)
-    meats.push("Tesco Cod or Salmon Fillets");
-
-  var days = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
-
-  var mealBody = document.getElementById("meals");
-  mealBody.innerHTML = "";
-
-  for (var i = 0; i < days.length; i++) {
-    var protein = meats.length ? meats[i % meats.length] : "⚠ Select at least one meat";
-    var tr = document.createElement("tr");
-    tr.innerHTML =
-      "<td>" + days[i] + "</td>" +
-      "<td>" + protein + " + rice + salad</td>";
-    mealBody.appendChild(tr);
-  }
-
-  var shop = document.getElementById("shopping");
-  shop.innerHTML = "";
-
-  if (!meats.length) {
-    var li = document.createElement("li");
-    li.textContent = "No meats selected";
-    shop.appendChild(li);
-    return;
-  }
-
-  for (var j = 0; j < meats.length; j++) {
-    var li2 = document.createElement("li");
-    li2.textContent = meats[j];
-    shop.appendChild(li2);
-  }
-
-  shop.appendChild(makeItem("Tesco Easy Cook Long Grain Rice"));
-  shop.appendChild(makeItem("Tesco Mixed Salad Leaves"));
-}
-
-function makeItem(text) {
-  var li = document.createElement("li");
-  li.textContent = text;
-  return li;
-}
-</script>
-
-</body>
-</html>
