@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Strength Fuel — Lean Mass Gain (Tesco Only)</title>
+  <title>Strength Fuel — Tesco Lean Mass Planner</title>
 
-  <!-- If you have styles.css in your repo, keep this link -->
-  <link rel="stylesheet" href="styles.css">
+  <!-- Optional external CSS (safe). If you don't have styles.css, delete this line. -->
+  <!-- <link rel="stylesheet" href="styles.css"> -->
 
-  <!-- Self-contained fallback styling (so the page still looks good without styles.css) -->
   <style>
     :root { --bg:#f7f7f7; --card:#fff; --text:#1f1f1f; --muted:#666; --line:#ddd; --brand:#111; --ok:#0a7a2f; --warn:#a85b00; --bad:#b00020; }
     * { box-sizing: border-box; }
@@ -16,599 +15,641 @@
     header { background: var(--brand); color:#fff; padding: 1.4rem 1rem; text-align:center; }
     header h1 { margin: 0 0 .35rem 0; font-size: 1.6rem; }
     header p { margin: 0; opacity: .9; }
-    main { max-width: 1100px; margin: 0 auto; padding: 1.2rem; display: grid; gap: 1rem; }
+    main { max-width: 1200px; margin: 0 auto; padding: 1.2rem; display: grid; gap: 1rem; }
     section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; }
     h2 { margin: 0 0 .8rem 0; font-size: 1.2rem; }
+    h3 { margin: .2rem 0 .6rem 0; font-size: 1.05rem; }
     .sub { margin: -.3rem 0 .8rem 0; color: var(--muted); font-size: .95rem; }
-    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
-    th, td { border: 1px solid var(--line); padding: .7rem; text-align: left; vertical-align: top; }
-    th { background: #eee; }
-    .grid { display:grid; gap: .8rem; grid-template-columns: repeat(12, 1fr); }
-    .col-12 { grid-column: span 12; }
-    .col-6 { grid-column: span 6; }
-    .col-4 { grid-column: span 4; }
-    .col-3 { grid-column: span 3; }
-    @media (max-width: 900px){ .col-6, .col-4, .col-3 { grid-column: span 12; } }
-    label { display:block; font-size: .95rem; margin-bottom: .35rem; }
-    input, select { width: 100%; padding: .6rem .65rem; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem; }
-    .row { display:flex; gap: .6rem; flex-wrap: wrap; align-items:center; }
-    button { background: var(--brand); color:#fff; border:0; padding: .65rem .85rem; border-radius: 9px; cursor:pointer; font-weight: 700; }
-    button.secondary { background: #444; }
-    button.ghost { background: transparent; color: var(--brand); border: 1px solid var(--line); }
+    .muted { color: var(--muted); }
+    .small { font-size: .92rem; }
+    .hr { height:1px; background: var(--line); margin: .9rem 0; }
     .pill { display:inline-block; padding: .25rem .55rem; border-radius: 999px; font-size: .85rem; border:1px solid var(--line); background:#fafafa; }
     .status-ok { color: var(--ok); font-weight: 700; }
     .status-warn { color: var(--warn); font-weight: 700; }
     .status-bad { color: var(--bad); font-weight: 700; }
+
+    .grid { display:grid; gap: .8rem; grid-template-columns: repeat(12, 1fr); }
+    .col-12 { grid-column: span 12; }
+    .col-8  { grid-column: span 8; }
+    .col-6  { grid-column: span 6; }
+    .col-4  { grid-column: span 4; }
+    .col-3  { grid-column: span 3; }
+    @media (max-width: 980px){ .col-8,.col-6,.col-4,.col-3 { grid-column: span 12; } }
+
+    label { display:block; font-size: .95rem; margin-bottom: .35rem; }
+    input[type="number"], input[type="text"], select, textarea {
+      width: 100%; padding: .6rem .65rem; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem;
+    }
+    textarea { min-height: 90px; }
+    .row { display:flex; gap: .6rem; flex-wrap: wrap; align-items:center; }
+    .checkgrid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .4rem .8rem; }
+    @media (max-width: 980px){ .checkgrid { grid-template-columns: 1fr; } }
+    .check { display:flex; gap:.55rem; align-items:center; padding:.35rem .4rem; border: 1px solid var(--line); border-radius: 9px; background:#fafafa; }
+    .check input { width:auto; }
+    button { background: var(--brand); color:#fff; border:0; padding: .65rem .85rem; border-radius: 9px; cursor:pointer; font-weight: 700; }
+    button.secondary { background: #444; }
+    button.ghost { background: transparent; color: var(--brand); border: 1px solid var(--line); }
+    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
+    th, td { border: 1px solid var(--line); padding: .7rem; text-align: left; vertical-align: top; }
+    th { background: #eee; }
     ul { margin: .3rem 0 0 1.1rem; }
-    .muted { color: var(--muted); }
-    .small { font-size: .9rem; }
+    .two-col { display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 980px){ .two-col { grid-template-columns: 1fr; } }
     footer { text-align:center; padding: 1.2rem 1rem 2rem; color: var(--muted); }
     .kbd { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
            font-size: .9em; background:#f1f1f1; border:1px solid var(--line); padding: .1rem .35rem; border-radius: 6px; }
-    .two-col { display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 900px){ .two-col { grid-template-columns: 1fr; } }
-    .hr { height:1px; background: var(--line); margin: .9rem 0; }
   </style>
 </head>
 
 <body>
-  <header>
-    <h1>Strength Fuel</h1>
-    <p>Tesco-only • Lean mass gain • Fibre-first • Data-driven adjustments (no guessing)</p>
-  </header>
+<header>
+  <h1>Strength Fuel</h1>
+  <p>Tesco-only staples • Fibre-first • Scale-driven adjustments • Generate meals + shopping from your selections</p>
+</header>
 
-  <main>
+<main>
 
-    <!-- MEAL PLAN -->
+  <!-- GENERATOR CONTROLS -->
+  <section>
+    <h2>Plan Builder</h2>
+    <p class="sub">
+      Select the proteins/meats and pantry items you want available. The meal plan and shopping list will only use what you tick.
+      <span class="pill">Mon–Fri</span> <span class="pill">No dinners</span>
+    </p>
+
+    <div class="grid">
+
+      <div class="col-3">
+        <label for="daysCount">Days to generate</label>
+        <select id="daysCount">
+          <option value="5" selected>5 days (Mon–Fri)</option>
+          <option value="4">4 days</option>
+        </select>
+      </div>
+
+      <div class="col-3">
+        <label for="goalMode">Mode</label>
+        <select id="goalMode">
+          <option value="leanmass" selected>Lean mass gain</option>
+          <option value="maintain">Maintenance</option>
+        </select>
+      </div>
+
+      <div class="col-3">
+        <label for="includeGutAddons">Fibre / gut add-ons</label>
+        <select id="includeGutAddons">
+          <option value="yes" selected>Include (berries, chickpeas/beans)</option>
+          <option value="no">Exclude</option>
+        </select>
+      </div>
+
+      <div class="col-3">
+        <label for="avoidChickenToggle">Chicken rule</label>
+        <select id="avoidChickenToggle">
+          <option value="allow" selected>Allow if selected</option>
+          <option value="avoid">Avoid chicken (hard rule)</option>
+        </select>
+      </div>
+
+      <div class="col-12">
+        <div class="row">
+          <button onclick="generateAll()">Generate meal plan + shopping list</button>
+          <button class="secondary" onclick="resetPreferences()">Reset preferences</button>
+          <span id="genStatus" class="small muted"></span>
+        </div>
+      </div>
+
+      <div class="col-6">
+        <h3>Choose proteins/meats (used in lunches)</h3>
+        <div id="proteinChecks" class="checkgrid"></div>
+        <p class="small muted" style="margin-top:.6rem;">
+          Tip: if you tick <strong>too few proteins</strong>, lunches will repeat (that’s fine for consistency).
+        </p>
+      </div>
+
+      <div class="col-6">
+        <h3>Pantry items (carbs / veg / extras)</h3>
+        <div id="pantryChecks" class="checkgrid"></div>
+
+        <div class="hr"></div>
+
+        <h3>Custom products (add/remove)</h3>
+        <p class="small muted">
+          Add items you want the plan to consider (e.g., “Tesco mixed salad bowl”, “kidney beans”, “skyr”, “pork loin steaks”).
+          Remove items by selecting them below and pressing remove.
+        </p>
+
+        <div class="grid">
+          <div class="col-8">
+            <label for="customAdd">Add product (Tesco-searchable name)</label>
+            <input id="customAdd" type="text" placeholder="e.g., Tesco Skyr Yogurt 450g" />
+          </div>
+          <div class="col-4 row" style="align-items:flex-end;">
+            <button class="ghost" onclick="addCustomItem()">Add</button>
+          </div>
+          <div class="col-12">
+            <label for="customList">Custom products (click one to remove)</label>
+            <select id="customList" size="6" style="width:100%;"></select>
+            <div class="row" style="margin-top:.6rem;">
+              <button class="ghost" onclick="removeSelectedCustom()">Remove selected</button>
+              <button class="ghost" onclick="clearCustom()">Clear all custom</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- MEAL PLAN OUTPUT -->
+  <section>
+    <h2>Meal Plan (No Dinners)</h2>
+    <p class="sub">Breakfast + 2 snacks + lunch. Generated from your selections. Fibre-first by default.</p>
+
+    <div id="warnings" class="small"></div>
+
+    <table aria-label="Meal plan table">
+      <thead>
+        <tr>
+          <th style="width: 12ch;">Day</th>
+          <th>Breakfast</th>
+          <th>Snack 1</th>
+          <th>Lunch</th>
+          <th>Snack 2</th>
+        </tr>
+      </thead>
+      <tbody id="mealBody">
+        <!-- generated rows -->
+      </tbody>
+    </table>
+
+    <div class="hr"></div>
+    <p class="small muted">
+      <strong>Progressive overload support:</strong> keep meals consistent Mon–Fri so training performance is measurable.
+      Adjust portions only from your scale trend (below).
+    </p>
+  </section>
+
+  <div class="two-col">
+    <!-- UPDATE STATS -->
     <section>
-      <h2>4-Day Meal Plan (No Dinners)</h2>
-      <p class="sub">Built for lean mass gain: high protein + calorie surplus support, with gut health (fibre) prioritised. <span class="pill">No chicken</span></p>
-
-      <table aria-label="4-day meal plan">
-        <thead>
-          <tr>
-            <th style="width: 10ch;">Day</th>
-            <th>Breakfast</th>
-            <th>Snack 1</th>
-            <th>Lunch</th>
-            <th>Snack 2</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td><strong>Day 1</strong></td>
-            <td>80g oats + 1 scoop whey (water/milk)</td>
-            <td>1 can tuna + 2 slices wholemeal bread + ½ avocado + handful spinach</td>
-            <td>5% beef mince (≈125g cooked) + rice + spinach (olive oil drizzle)</td>
-            <td>Whey shake + 1 banana</td>
-          </tr>
-          <tr>
-            <td><strong>Day 2</strong></td>
-            <td>80g oats + 1 scoop whey + berries</td>
-            <td>Greek yoghurt + mixed nuts</td>
-            <td>Cod fillet + quinoa + salad leaves (+ optional chickpeas)</td>
-            <td>2 slices wholemeal bread + tuna + spinach</td>
-          </tr>
-          <tr>
-            <td><strong>Day 3</strong></td>
-            <td>80g oats + 1 scoop whey + 1 banana</td>
-            <td>1 can tuna + 2 slices wholemeal bread + ½ avocado</td>
-            <td>5% beef mince (≈125g cooked) + rice + spinach (olive oil drizzle)</td>
-            <td>Whey shake + mixed nuts</td>
-          </tr>
-          <tr>
-            <td><strong>Day 4</strong></td>
-            <td>80g oats + 1 scoop whey + berries</td>
-            <td>Greek yoghurt + mixed nuts</td>
-            <td>Cod fillet + couscous + salad leaves (+ optional chickpeas)</td>
-            <td>2 slices wholemeal bread + tuna + spinach</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <div class="hr"></div>
-      <p class="small muted">
-        <strong>Fibre focus:</strong> oats + wholemeal bread + greens + berries/banana + optional chickpeas.
-        If digestion is sensitive, spread fibre across meals and increase water intake.
+      <h2>Update Stats (Scale-Driven)</h2>
+      <p class="sub">
+        Save weigh-ins. The plan only adjusts when there are at least <strong>3 readings spanning 7+ days</strong> (no guessing).
       </p>
+
+      <div class="grid">
+        <div class="col-6">
+          <label for="weight">Body Weight (kg)</label>
+          <input id="weight" type="number" step="0.1" placeholder="e.g., 73.0" />
+        </div>
+        <div class="col-6">
+          <label for="bodyfat">Body Fat % (optional)</label>
+          <input id="bodyfat" type="number" step="0.1" placeholder="e.g., 15.5" />
+        </div>
+
+        <div class="col-12 row">
+          <button onclick="addReading()">Save reading</button>
+          <button class="secondary" onclick="resetReadings()">Reset readings</button>
+        </div>
+
+        <div class="col-12">
+          <p id="trendOut" class="small" style="margin:.4rem 0 0 0;"></p>
+          <p id="adjustmentOut" class="small" style="margin:.4rem 0 0 0;"></p>
+          <p class="small muted" style="margin:.4rem 0 0 0;">
+            When adjustment triggers, the generator changes portions:
+            <span class="kbd">oats</span> and <span class="kbd">lunch carbs</span> up/down.
+          </p>
+        </div>
+
+        <div class="col-12">
+          <details>
+            <summary><strong>View saved readings</strong> <span class="muted">(stored in your browser)</span></summary>
+            <div id="readingsOut" class="small" style="margin-top:.6rem;"></div>
+          </details>
+        </div>
+      </div>
     </section>
 
-    <div class="two-col">
-      <!-- UPDATE STATS -->
-      <section>
-        <h2>Update Stats (Scale-Driven Adjustments)</h2>
-        <p class="sub">
-          Enter your <strong>weight</strong>. Body fat % is optional — if blank, the system uses your <strong>last saved</strong> BF%.
-          Adjustments only trigger when there’s enough trend data (so we don’t “guess”).
-        </p>
-
-        <div class="grid">
-          <div class="col-6">
-            <label for="weight">Body Weight (kg)</label>
-            <input id="weight" type="number" step="0.1" placeholder="e.g., 73.0" />
-          </div>
-
-          <div class="col-6">
-            <label for="bodyfat">Body Fat % (optional)</label>
-            <input id="bodyfat" type="number" step="0.1" placeholder="e.g., 15.5" />
-          </div>
-
-          <div class="col-12">
-            <label class="row" style="gap:.5rem;">
-              <input id="includeGutAddons" type="checkbox" checked style="width:auto; transform: translateY(1px);" />
-              Include gut-health add-ons (berries + chickpeas) in shopping list
-            </label>
-          </div>
-
-          <div class="col-12 row">
-            <button onclick="addReading()">Save Reading + Update Plan</button>
-            <button class="secondary" onclick="resetReadings()">Reset Readings</button>
-          </div>
-
-          <div class="col-12">
-            <p id="trendOut" class="small" style="margin:.4rem 0 0 0;"></p>
-            <p id="adjustmentOut" class="small" style="margin:.4rem 0 0 0;"></p>
-          </div>
-
-          <div class="col-12">
-            <details>
-              <summary><strong>View saved readings</strong> <span class="muted">(stored in your browser)</span></summary>
-              <div id="readingsOut" class="small" style="margin-top:.6rem;"></div>
-            </details>
-          </div>
-        </div>
-      </section>
-
-      <!-- THURSDAY WORKOUT CHECK -->
-      <section>
-        <h2>Workout Check (Thursday — Forearm Fatigue from Karate)</h2>
-        <p class="sub">
-          Rate forearm fatigue after Wednesday karate. The plan keeps chest volume high while reducing grip/forearm stress when needed.
-        </p>
-
-        <div class="grid">
-          <div class="col-6">
-            <label for="fatigue">Forearm fatigue (0–10)</label>
-            <input id="fatigue" type="number" min="0" max="10" step="1" value="4" />
-          </div>
-
-          <div class="col-6 row" style="align-items:flex-end;">
-            <button onclick="updateThursday()">Generate Thursday Session</button>
-          </div>
-
-          <div class="col-12">
-            <div id="thursdayOut" class="small"></div>
-          </div>
-
-          <div class="col-12">
-            <p class="small muted">
-              <strong>Progressive overload rule:</strong> Add reps first (within target range), then add load when you hit the top of the rep range on all sets with clean form.
-            </p>
-          </div>
-        </div>
-      </section>
-    </div>
-
-    <!-- SHOPPING LIST -->
+    <!-- SHOPPING LIST OUTPUT -->
     <section>
-      <h2>Tesco Shopping List (4 Days • No Dinners • No Chicken)</h2>
-      <p class="sub">Generated from the plan + your latest trend adjustment. All items are Tesco-searchable.</p>
+      <h2>Tesco Shopping List (Generated)</h2>
+      <p class="sub">Built from the meal plan. Copy/paste for your Tesco order notes.</p>
 
       <div class="row" style="margin-bottom:.6rem;">
-        <button class="ghost" onclick="renderShopping()">Refresh List</button>
-        <button class="ghost" onclick="copyShopping()">Copy to Clipboard</button>
+        <button class="ghost" onclick="renderShopping()">Refresh list</button>
+        <button class="ghost" onclick="copyShopping()">Copy to clipboard</button>
         <span id="copyOut" class="small muted"></span>
       </div>
 
       <div class="two-col">
         <div>
-          <h3 style="margin:.3rem 0 .4rem 0; font-size:1.05rem;">Core items</h3>
+          <h3>Core</h3>
           <ul id="shoppingCore"></ul>
         </div>
         <div>
-          <h3 style="margin:.3rem 0 .4rem 0; font-size:1.05rem;">Adjustments / add-ons</h3>
-          <ul id="shoppingAdj"></ul>
+          <h3>Quantities / Notes</h3>
+          <ul id="shoppingQty"></ul>
         </div>
       </div>
 
       <div class="hr"></div>
       <p class="small muted">
-        Tip for ordering: copy the list and paste into your Tesco notes. Keep your staples consistent to make progressive overload and calorie control easier.
+        Note: quantities are practical estimates for ordering (Tesco pack sizes vary). The “trend adjustment” adds or reduces carbs.
       </p>
     </section>
+  </div>
 
-    <footer>
-      <p><strong>Strength Fuel</strong> • Tesco-only staples • Fibre-first • Scale-driven adjustments • Chest/forearms emphasis with fatigue management</p>
-    </footer>
+  <footer>
+    <p><strong>Strength Fuel</strong> • Smart generator (rules-based). For “true AI chat”, you’d need an API key + secure backend.</p>
+  </footer>
 
-  </main>
+</main>
 
-  <script>
-    /**********************
-     * Strength Fuel — Data Rules
-     * - No guessing: Only adjust when trend data is sufficient
-     * - BF%: If blank, use last saved BF% reading
-     * - Tesco-only shopping list items
-     * - No chicken included anywhere
-     **********************/
+<script>
+/* =========================
+   STORAGE
+========================= */
+const PREF_KEY = "sf_prefs_v2";
+const STORAGE_KEY = "sf_readings_v1";
+const CUSTOM_KEY = "sf_custom_items_v1";
+const LAST_PLAN_KEY = "sf_last_plan_v1";
 
-    const STORAGE_KEY = "sf_readings_v1";
+/* =========================
+   TREND RULES (NO GUESSING)
+========================= */
+const TARGET_MIN = 0.15; // kg/week
+const TARGET_MAX = 0.35; // kg/week
 
-    // Targets: lean mass gain rate range (kg/week)
-    // We only use these as thresholds for adjustment decisions when enough data exists.
-    const TARGET_MIN = 0.15;
-    const TARGET_MAX = 0.35;
+function loadReadings() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]"); }
+  catch { return []; }
+}
+function saveReadings(arr) { localStorage.setItem(STORAGE_KEY, JSON.stringify(arr)); }
 
-    // Base plan quantities for 4 days (no dinners)
-    const basePlan = {
-      days: 4,
-      oats_g_per_day: 80,
-      whey_scoops_breakfast_per_day: 1,
-      whey_scoops_snack_total: 2, // Day1 + Day3 shakes
-      tuna_cans_total: 4,
-      bread_slices_total: 8,
-      avocados_total: 1, // 1 whole avocado (½ twice)
-      beef_mince_g_total: 250, // ~125g cooked x2 lunches (buy 500g pack)
-      cod_lunches: 2, // 1 fillet each
-      rice_dry_g_total: 150, // ~75g dry x2 lunches
-      quinoa_dry_g_total: 75, // ~75g dry x1 lunch
-      couscous_dry_g_total: 75, // ~75g dry x1 lunch
-      greek_yoghurt_g_total: 400, // 200g x2
-      nuts_g_total: 60, // 30g x2
-      spinach_bag: 1,
-      salad_bag: 1,
-      bananas_total: 2,
-      berries_total_g: 300,
-      chickpeas_cans_total: 1 // optional add-on
+function lastSavedBF(readings) {
+  for (let i = readings.length - 1; i >= 0; i--) {
+    const bf = readings[i].bf;
+    if (bf !== null && bf !== undefined && bf !== "") return bf;
+  }
+  return null;
+}
+
+function computeWeeklyTrend(readings) {
+  if (readings.length < 3) return { ok:false, reason:"Need at least 3 readings." };
+
+  const sorted = [...readings].sort((a,b) => new Date(a.date) - new Date(b.date));
+  const firstDate = new Date(sorted[0].date);
+  const lastDate  = new Date(sorted[sorted.length - 1].date);
+  const spanDays  = (lastDate - firstDate) / (1000 * 60 * 60 * 24);
+
+  if (spanDays < 7) return { ok:false, reason:"Need readings spanning at least 7 days (avoid noise)." };
+
+  const xs = sorted.map(r => (new Date(r.date) - firstDate) / (1000*60*60*24));
+  const ys = sorted.map(r => r.weight);
+
+  const n = xs.length;
+  const meanX = xs.reduce((a,b)=>a+b,0)/n;
+  const meanY = ys.reduce((a,b)=>a+b,0)/n;
+
+  let num=0, den=0;
+  for (let i=0; i<n; i++) {
+    num += (xs[i]-meanX)*(ys[i]-meanY);
+    den += (xs[i]-meanX)*(xs[i]-meanX);
+  }
+  if (den === 0) return { ok:false, reason:"Trend calculation failed (date spread too small)." };
+
+  const slopeKgPerDay = num/den;
+  return { ok:true, kgPerWeek: slopeKgPerDay*7, spanDays: Math.round(spanDays), points: n };
+}
+
+function decideAdjustment(trend, goalMode="leanmass") {
+  if (goalMode === "maintain") {
+    return { status:"ontrack", label:"Maintenance mode (hold portions)", deltaOats: 0, deltaLunchCarb: 0,
+             details:"Maintenance selected — keep portions steady and focus on training progression." };
+  }
+
+  if (!trend.ok) {
+    return { status:"hold", label:"Hold (insufficient trend data)", deltaOats: 0, deltaLunchCarb: 0,
+             details: trend.reason + " Keep portions steady." };
+  }
+
+  const r = trend.kgPerWeek;
+  if (r < TARGET_MIN) {
+    return { status:"increase", label:"Increase carbs (gain too slow)", deltaOats: +50, deltaLunchCarb: +30,
+             details:`Trend ${r.toFixed(2)} kg/week (< ${TARGET_MIN}–${TARGET_MAX}). Add carbs; keep protein stable.` };
+  }
+  if (r > TARGET_MAX) {
+    return { status:"decrease", label:"Reduce carbs slightly (gain too fast)", deltaOats: -30, deltaLunchCarb: -20,
+             details:`Trend ${r.toFixed(2)} kg/week (> ${TARGET_MIN}–${TARGET_MAX}). Reduce carbs slightly; keep fibre high.` };
+  }
+  return { status:"ontrack", label:"On track (hold portions)", deltaOats: 0, deltaLunchCarb: 0,
+           details:`Trend ${r.toFixed(2)} kg/week (within ${TARGET_MIN}–${TARGET_MAX}). Keep steady.` };
+}
+
+/* =========================
+   DEFAULT OPTIONS (TESCO-SEARCHABLE LABELS)
+========================= */
+const proteinOptions = [
+  { id:"beef5",   label:"5% beef mince",      tesco:"Tesco 5% Fat Beef Mince", type:"meat" },
+  { id:"pork",    label:"pork (loin/steaks)", tesco:"Tesco Pork Loin Steaks",  type:"meat" },
+  { id:"duck",    label:"duck breast",        tesco:"Tesco Duck Breast Fillets", type:"meat" },
+  { id:"chicken", label:"chicken breast",     tesco:"Tesco Chicken Breast Fillets", type:"meat" },
+  { id:"salmon",  label:"salmon fillets",     tesco:"Tesco Salmon Fillets",    type:"fish" },
+  { id:"cod",     label:"cod fillets",        tesco:"Tesco Cod Fillets (Frozen)", type:"fish" },
+  { id:"tuna",    label:"tinned tuna",        tesco:"Tesco Tuna Chunks in Spring Water", type:"fish" },
+  { id:"eggs",    label:"eggs",               tesco:"Tesco Free Range Eggs",    type:"other" }
+];
+
+const pantryOptions = [
+  { id:"oats",    label:"oats",         tesco:"Tesco Scottish Porridge Oats", cat:"carb" },
+  { id:"rice",    label:"rice",         tesco:"Tesco Easy Cook Long Grain Rice", cat:"carb" },
+  { id:"quinoa",  label:"quinoa",       tesco:"Tesco Quinoa", cat:"carb" },
+  { id:"couscous",label:"couscous",     tesco:"Tesco Couscous", cat:"carb" },
+  { id:"bread",   label:"wholemeal bread", tesco:"Tesco Wholemeal Medium Bread", cat:"carb" },
+  { id:"sweetpot",label:"sweet potatoes", tesco:"Tesco Sweet Potatoes", cat:"carb" },
+
+  { id:"spinach", label:"spinach",      tesco:"Tesco Spinach Bag", cat:"veg" },
+  { id:"salad",   label:"salad leaves", tesco:"Tesco Mixed Salad Leaves", cat:"veg" },
+  { id:"broccoli",label:"broccoli",     tesco:"Tesco Tenderstem Broccoli", cat:"veg" },
+
+  { id:"oliveoil",label:"olive oil",    tesco:"Tesco Extra Virgin Olive Oil", cat:"fat" },
+  { id:"avocado", label:"avocado",      tesco:"Tesco Avocados", cat:"fat" },
+  { id:"nuts",    label:"mixed nuts",   tesco:"Tesco Mixed Nuts", cat:"fat" },
+
+  { id:"yoghurt", label:"Greek yoghurt",tesco:"Tesco Greek Yoghurt", cat:"protein" },
+  { id:"whey",    label:"whey protein", tesco:"Whey Protein (Optimum Nutrition Gold Standard Whey)", cat:"protein" },
+
+  { id:"bananas", label:"bananas",      tesco:"Tesco Bananas", cat:"fruit" },
+  { id:"berries", label:"berries (frozen)", tesco:"Tesco Frozen Mixed Berries", cat:"fruit" },
+  { id:"chickpeas", label:"chickpeas/beans", tesco:"Tesco Chickpeas in Water", cat:"fibre" },
+
+  { id:"creatine",label:"creatine",     tesco:"Creatine Monohydrate", cat:"supp" },
+  { id:"wellman", label:"multivitamin", tesco:"Wellman Max", cat:"supp" }
+];
+
+/* =========================
+   PREFERENCES + CUSTOM ITEMS
+========================= */
+function defaultPrefs() {
+  return {
+    daysCount: 5,
+    goalMode: "leanmass",
+    includeGutAddons: "yes",
+    avoidChickenToggle: "allow",
+    proteins: {
+      // Defaults: no chicken, your earlier preferences lean fish/beef/tuna/whey
+      beef5: true, pork: false, duck: false, chicken: false,
+      salmon: true, cod: true, tuna: true, eggs: false
+    },
+    pantry: {
+      oats: true, rice: true, quinoa: true, couscous: true, bread: true, sweetpot: false,
+      spinach: true, salad: true, broccoli: false,
+      oliveoil: true, avocado: true, nuts: true,
+      yoghurt: true, whey: true,
+      bananas: true, berries: true, chickpeas: true,
+      creatine: true, wellman: true
+    }
+  };
+}
+
+function loadPrefs() {
+  try {
+    const raw = localStorage.getItem(PREF_KEY);
+    if (!raw) return defaultPrefs();
+    const p = JSON.parse(raw);
+    return { ...defaultPrefs(), ...p,
+      proteins: { ...defaultPrefs().proteins, ...(p.proteins||{}) },
+      pantry:   { ...defaultPrefs().pantry,   ...(p.pantry||{}) }
     };
+  } catch {
+    return defaultPrefs();
+  }
+}
+function savePrefs(p) { localStorage.setItem(PREF_KEY, JSON.stringify(p)); }
 
-    // Core Tesco-searchable items (pack-size suggestions)
-    function coreShoppingList(includeGutAddons = true) {
-      const list = [
-        "Tesco 5% Fat Beef Mince — 500g (covers 2 lunches; leftovers optional)",
-        "Tesco Cod Fillets (Frozen) — 4-pack",
-        "Tesco Tuna Chunks in Spring Water — 4 × 145g cans",
-        "Whey Protein (e.g., Optimum Nutrition Gold Standard Whey) — tub",
-        "Tesco Scottish Porridge Oats — 1kg",
-        "Tesco Easy Cook Long Grain Rice — 1kg",
-        "Tesco Quinoa — 300g",
-        "Tesco Couscous — 500g",
-        "Tesco Wholemeal Medium Bread — 800g loaf",
-        "Tesco Avocados — pack of 2",
-        "Tesco Extra Virgin Olive Oil — 500ml",
-        "Tesco Mixed Nuts (unsalted if possible) — 200g",
-        "Tesco Spinach — 240g bag",
-        "Tesco Mixed Salad Leaves — 200g bag",
-        "Tesco Greek Yoghurt — 500g tub",
-        "Tesco Bananas — pack",
-        "Creatine Monohydrate — tub",
-        "Wellman Max — 30 tablets (or your usual multi)"
-      ];
+function loadCustom() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_KEY) || "[]"); }
+  catch { return []; }
+}
+function saveCustom(arr) { localStorage.setItem(CUSTOM_KEY, JSON.stringify(arr)); }
 
-      if (includeGutAddons) {
-        list.push("Tesco Frozen Mixed Berries — ~300g (for breakfast fibre/polyphenols)");
-        list.push("Tesco Chickpeas in Water — 1 can (optional fibre boost for salads)");
-      }
+function resetPreferences() {
+  localStorage.removeItem(PREF_KEY);
+  localStorage.removeItem(CUSTOM_KEY);
+  initUI();
+  generateAll();
+}
 
-      return list;
+/* =========================
+   UI BUILDERS
+========================= */
+function initUI() {
+  const prefs = loadPrefs();
+
+  // Controls
+  document.getElementById("daysCount").value = String(prefs.daysCount);
+  document.getElementById("goalMode").value = prefs.goalMode;
+  document.getElementById("includeGutAddons").value = prefs.includeGutAddons;
+  document.getElementById("avoidChickenToggle").value = prefs.avoidChickenToggle;
+
+  // Proteins
+  const proteinWrap = document.getElementById("proteinChecks");
+  proteinWrap.innerHTML = "";
+  proteinOptions.forEach(opt => {
+    const div = document.createElement("label");
+    div.className = "check";
+    div.innerHTML = `
+      <input type="checkbox" id="prot_${opt.id}">
+      <span><strong>${opt.label}</strong><br><span class="muted small">${opt.tesco}</span></span>
+    `;
+    proteinWrap.appendChild(div);
+    document.getElementById(`prot_${opt.id}`).checked = !!prefs.proteins[opt.id];
+    document.getElementById(`prot_${opt.id}`).addEventListener("change", () => {
+      const p = loadPrefs();
+      p.proteins[opt.id] = document.getElementById(`prot_${opt.id}`).checked;
+      savePrefs(p);
+    });
+  });
+
+  // Pantry
+  const pantryWrap = document.getElementById("pantryChecks");
+  pantryWrap.innerHTML = "";
+  pantryOptions.forEach(opt => {
+    const div = document.createElement("label");
+    div.className = "check";
+    div.innerHTML = `
+      <input type="checkbox" id="pan_${opt.id}">
+      <span><strong>${opt.label}</strong><br><span class="muted small">${opt.tesco}</span></span>
+    `;
+    pantryWrap.appendChild(div);
+    document.getElementById(`pan_${opt.id}`).checked = !!prefs.pantry[opt.id];
+    document.getElementById(`pan_${opt.id}`).addEventListener("change", () => {
+      const p = loadPrefs();
+      p.pantry[opt.id] = document.getElementById(`pan_${opt.id}`).checked;
+      savePrefs(p);
+    });
+  });
+
+  // Custom list
+  renderCustomList();
+}
+
+function renderCustomList() {
+  const list = document.getElementById("customList");
+  const items = loadCustom();
+  list.innerHTML = "";
+  items.forEach((x, idx) => {
+    const opt = document.createElement("option");
+    opt.value = String(idx);
+    opt.textContent = x;
+    list.appendChild(opt);
+  });
+}
+
+function addCustomItem() {
+  const input = document.getElementById("customAdd");
+  const v = (input.value || "").trim();
+  if (!v) return;
+  const items = loadCustom();
+  items.push(v);
+  saveCustom(items);
+  input.value = "";
+  renderCustomList();
+}
+
+function removeSelectedCustom() {
+  const list = document.getElementById("customList");
+  const idx = list.value;
+  if (idx === null || idx === undefined || idx === "") return;
+  const items = loadCustom();
+  items.splice(parseInt(idx,10), 1);
+  saveCustom(items);
+  renderCustomList();
+}
+function clearCustom() {
+  saveCustom([]);
+  renderCustomList();
+}
+
+/* =========================
+   MEAL GENERATION (RULES-BASED)
+========================= */
+const dayNames5 = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+const dayNames4 = ["Day 1","Day 2","Day 3","Day 4"];
+
+function pickEnabled(list, enabledMap, avoidChickenRule="allow") {
+  const enabled = list.filter(x => enabledMap[x.id]);
+  if (avoidChickenRule === "avoid") return enabled.filter(x => x.id !== "chicken");
+  return enabled;
+}
+
+// A simple rotation helper
+function rotatePick(arr, i) {
+  if (!arr.length) return null;
+  return arr[i % arr.length];
+}
+
+function ensure(prefs) {
+  const warnings = [];
+  const enabledProteins = pickEnabled(proteinOptions, prefs.proteins, prefs.avoidChickenToggle);
+  const enabledPantry = pantryOptions.filter(x => prefs.pantry[x.id]);
+
+  // Must-haves for plan
+  const hasOats = prefs.pantry.oats;
+  const hasWhey = prefs.pantry.whey;
+  if (!hasOats) warnings.push("Oats not selected: breakfast will switch to toast-based breakfasts.");
+  if (!hasWhey) warnings.push("Whey not selected: protein will rely more on tuna/yoghurt/eggs.");
+  if (enabledProteins.length === 0) warnings.push("No lunch proteins selected: tick at least one meat/fish/eggs.");
+  const hasCarb = ["rice","quinoa","couscous","bread","sweetpot"].some(id => prefs.pantry[id]);
+  if (!hasCarb) warnings.push("No lunch carbs selected (rice/quinoa/couscous/bread/sweet potato): lunches can’t be built properly.");
+  const hasVeg = ["spinach","salad","broccoli"].some(id => prefs.pantry[id]);
+  if (!hasVeg) warnings.push("No veg selected (spinach/salad/broccoli): fibre will be low — add at least one veg.");
+  return warnings;
+}
+
+function buildMeals(prefs, adjustment) {
+  const days = parseInt(prefs.daysCount, 10) || 5;
+  const dayNames = (days === 5) ? dayNames5 : dayNames4;
+
+  const enabledProteins = pickEnabled(proteinOptions, prefs.proteins, prefs.avoidChickenToggle);
+
+  // Pantry availability flags
+  const has = (id) => !!prefs.pantry[id];
+
+  // Portion logic from trend adjustment
+  const oatsPortion = Math.max(40, 80 + adjustment.deltaOats);
+  const lunchCarbDelta = adjustment.deltaLunchCarb;
+
+  // Lunch carb rotation (only from enabled carbs)
+  const carbPool = [];
+  if (has("rice")) carbPool.push({id:"rice", name:"rice", portion:`${Math.max(40, 75 + lunchCarbDelta)}g dry`});
+  if (has("quinoa")) carbPool.push({id:"quinoa", name:"quinoa", portion:`${Math.max(40, 75 + lunchCarbDelta)}g dry`});
+  if (has("couscous")) carbPool.push({id:"couscous", name:"couscous", portion:`${Math.max(40, 75 + lunchCarbDelta)}g dry`});
+  if (has("sweetpot")) carbPool.push({id:"sweetpot", name:"sweet potato", portion:`${Math.max(150, 250 + lunchCarbDelta*5)}g`});
+  if (has("bread")) carbPool.push({id:"bread", name:"wholemeal bread", portion:`2 slices (add 1 slice if increasing)`});
+
+  // Veg rotation
+  const vegPool = [];
+  if (has("spinach")) vegPool.push("spinach");
+  if (has("salad")) vegPool.push("salad leaves");
+  if (has("broccoli")) vegPool.push("broccoli");
+
+  // Snacks availability
+  const snackProteinPool = [];
+  if (has("yoghurt")) snackProteinPool.push("Greek yoghurt");
+  if (prefs.proteins.tuna) snackProteinPool.push("tinned tuna"); // snack-friendly
+  if (has("whey")) snackProteinPool.push("whey shake");
+  if (prefs.proteins.eggs) snackProteinPool.push("eggs");
+
+  // Fibre add-ons
+  const includeGut = (prefs.includeGutAddons === "yes");
+  const allowBerries = includeGut && has("berries");
+  const allowChickpeas = includeGut && has("chickpeas");
+
+  const meals = [];
+
+  for (let i=0; i<days; i++) {
+    const day = dayNames[i] || `Day ${i+1}`;
+
+    // Breakfast
+    let breakfast = "";
+    if (has("oats")) {
+      breakfast = `${oatsPortion}g oats`;
+      if (has("whey")) breakfast += ` + 1 scoop whey`;
+      if (allowBerries) breakfast += ` + berries`;
+      if (has("bananas") && !allowBerries) breakfast += ` + banana`;
+    } else if (has("bread")) {
+      breakfast = `Wholemeal toast (2 slices)`;
+      if (has("whey")) breakfast += ` + whey shake`;
+      if (has("avocado")) breakfast += ` + avocado`;
+    } else {
+      breakfast = `Breakfast missing key items (select oats or bread).`;
     }
 
-    // Readings helpers
-    function loadReadings() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : [];
-      } catch {
-        return [];
-      }
+    // Snack 1 (rotate between tuna sandwich and yoghurt+nuts)
+    let snack1 = "";
+    if (prefs.proteins.tuna && has("bread")) {
+      snack1 = `Tuna sandwich (tuna + wholemeal bread)`;
+      if (has("spinach")) snack1 += ` + spinach`;
+      if (has("avocado")) snack1 += ` + avocado (optional)`;
+    } else if (has("yoghurt") && has("nuts")) {
+      snack1 = `Greek yoghurt + mixed nuts`;
+      if (has("bananas")) snack1 += ` + banana (optional)`;
+    } else if (has("whey")) {
+      snack1 = `Whey shake`;
+      if (has("bananas")) snack1 += ` + banana`;
+    } else {
+      snack1 = `Select snack items (tuna+bread OR yoghurt+nuts OR whey).`;
     }
 
-    function saveReadings(arr) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
-    }
+    // Lunch (rotate proteins + carbs + veg)
+    const protein = rotatePick(enabledProteins, i);
+    const carb = rotatePick(carbPool, i);
+    const veg = rotatePick(vegPool, i);
 
-    function lastSavedBF(readings) {
-      for (let i = readings.length - 1; i >= 0; i--) {
-        if (readings[i].bf !== null && readings[i].bf !== undefined && readings[i].bf !== "") {
-          return readings[i].bf;
-        }
-      }
-      return null;
-    }
-
-    // Compute trend using simple linear regression slope (kg/day), converted to kg/week
-    // Only valid if we have >= 3 readings spread over >= 7 days (to avoid noise)
-    function computeWeeklyTrend(readings) {
-      if (readings.length < 3) return { ok:false, reason:"Need at least 3 readings to compute a trend." };
-
-      const sorted = [...readings].sort((a,b) => new Date(a.date) - new Date(b.date));
-      const firstDate = new Date(sorted[0].date);
-      const lastDate  = new Date(sorted[sorted.length - 1].date);
-      const spanDays  = (lastDate - firstDate) / (1000 * 60 * 60 * 24);
-
-      if (spanDays < 7) return { ok:false, reason:"Need readings spanning at least 7 days to avoid guessing." };
-
-      // x = days since first, y = weight
-      const xs = sorted.map(r => (new Date(r.date) - firstDate) / (1000 * 60 * 60 * 24));
-      const ys = sorted.map(r => r.weight);
-
-      const n = xs.length;
-      const meanX = xs.reduce((a,b)=>a+b,0) / n;
-      const meanY = ys.reduce((a,b)=>a+b,0) / n;
-
-      let num = 0, den = 0;
-      for (let i=0; i<n; i++) {
-        num += (xs[i]-meanX) * (ys[i]-meanY);
-        den += (xs[i]-meanX) * (xs[i]-meanX);
-      }
-      if (den === 0) return { ok:false, reason:"Trend calculation failed (insufficient date spread)." };
-
-      const slopeKgPerDay = num / den;
-      const kgPerWeek = slopeKgPerDay * 7;
-
-      return { ok:true, kgPerWeek, spanDays: Math.round(spanDays), points:n };
-    }
-
-    // Decide food adjustment based on trend (only when trend ok)
-    function decideAdjustment(trend) {
-      if (!trend.ok) {
-        return {
-          status: "hold",
-          label: "Hold steady (insufficient trend data)",
-          details: `${trend.reason} Keep intake steady and focus on progressive overload.`
-        };
-      }
-
-      const rate = trend.kgPerWeek;
-
-      if (rate < TARGET_MIN) {
-        return {
-          status: "increase",
-          label: "Increase intake (too slow)",
-          details: `Trend: ${rate.toFixed(2)} kg/week (below ${TARGET_MIN}–${TARGET_MAX}). Add carbs around training and keep protein steady.`,
-          planChanges: [
-            "Breakfast: +50g oats (add 200–250 ml extra fluid)",
-            "Lunch (rice days): +30g dry rice (or add 1 extra slice wholemeal bread on non-rice days)",
-            "Optional fibre: add chickpeas to salads"
-          ],
-          shoppingAdds: [
-            "Extra oats (ensure you have enough for +200g over 4 days)",
-            "Extra rice (ensure you have enough for +60g dry over 4 days)",
-            "Optional: extra wholemeal bread if you prefer bread over rice"
-          ]
-        };
-      }
-
-      if (rate > TARGET_MAX) {
-        return {
-          status: "decrease",
-          label: "Slightly reduce intake (too fast)",
-          details: `Trend: ${rate.toFixed(2)} kg/week (above ${TARGET_MIN}–${TARGET_MAX}). Reduce carbs slightly to keep the gain lean.`,
-          planChanges: [
-            "Breakfast: −30g oats",
-            "Snack: remove nuts on one day OR halve nuts portion",
-            "Keep protein the same; keep fibre high"
-          ],
-          shoppingAdds: [
-            "No extras needed — use the core list and slightly reduce portions"
-          ]
-        };
-      }
-
-      return {
-        status: "ontrack",
-        label: "On track (hold intake)",
-        details: `Trend: ${rate.toFixed(2)} kg/week (within ${TARGET_MIN}–${TARGET_MAX}). Keep food steady and push progressive overload.`,
-        planChanges: [
-          "Keep portions consistent",
-          "Add reps first, then load when you hit top of rep range across all sets"
-        ],
-        shoppingAdds: [
-          "Core list only"
-        ]
-      };
-    }
-
-    // UI render functions
-    function renderReadings() {
-      const out = document.getElementById("readingsOut");
-      const readings = loadReadings();
-
-      if (!readings.length) {
-        out.innerHTML = "<p class='muted'>No readings saved yet.</p>";
-        return;
-      }
-
-      const rows = readings
-        .sort((a,b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 10)
-        .map(r => {
-          const d = new Date(r.date);
-          const dStr = d.toLocaleDateString("en-GB", { year:"numeric", month:"short", day:"2-digit" });
-          const bfStr = (r.bf === null || r.bf === undefined) ? "—" : `${r.bf}%`;
-          return `<div>• <strong>${dStr}</strong>: ${r.weight.toFixed(1)} kg <span class="muted">(BF: ${bfStr})</span></div>`;
-        }).join("");
-
-      out.innerHTML = rows + (readings.length > 10 ? "<p class='muted small'>Showing latest 10 readings.</p>" : "");
-    }
-
-    function renderShopping() {
-      const coreEl = document.getElementById("shoppingCore");
-      const adjEl  = document.getElementById("shoppingAdj");
-      const includeGutAddons = document.getElementById("includeGutAddons")?.checked ?? true;
-
-      coreEl.innerHTML = "";
-      adjEl.innerHTML  = "";
-
-      const readings = loadReadings();
-      const trend = computeWeeklyTrend(readings);
-      const decision = decideAdjustment(trend);
-
-      // Core list
-      coreShoppingList(includeGutAddons).forEach(item => {
-        const li = document.createElement("li");
-        li.textContent = item;
-        coreEl.appendChild(li);
-      });
-
-      // Adjustment notes
-      const headerLi = document.createElement("li");
-      headerLi.innerHTML = `<strong>${decision.label}</strong> — <span class="muted">${decision.details}</span>`;
-      adjEl.appendChild(headerLi);
-
-      if (decision.planChanges) {
-        decision.planChanges.forEach(ch => {
-          const li = document.createElement("li");
-          li.textContent = ch;
-          adjEl.appendChild(li);
-        });
-      }
-
-      if (decision.shoppingAdds) {
-        const li = document.createElement("li");
-        li.innerHTML = "<strong>Shopping tweaks:</strong>";
-        adjEl.appendChild(li);
-
-        decision.shoppingAdds.forEach(a => {
-          const li2 = document.createElement("li");
-          li2.textContent = a;
-          adjEl.appendChild(li2);
-        });
-      }
-
-      // Trend summary
-      const trendOut = document.getElementById("trendOut");
-      const adjustmentOut = document.getElementById("adjustmentOut");
-
-      if (!trend.ok) {
-        trendOut.innerHTML = `<span class="status-warn">Trend:</span> Not computed — ${trend.reason}`;
-      } else {
-        const cls = (trend.kgPerWeek < TARGET_MIN) ? "status-bad" : (trend.kgPerWeek > TARGET_MAX) ? "status-warn" : "status-ok";
-        trendOut.innerHTML = `<span class="${cls}">Trend:</span> ${trend.kgPerWeek.toFixed(2)} kg/week • ${trend.points} readings • ${trend.spanDays} days`;
-      }
-
-      // Decision line
-      let statusClass = "status-ok";
-      if (decision.status === "increase") statusClass = "status-bad";
-      if (decision.status === "decrease" || decision.status === "hold") statusClass = "status-warn";
-
-      adjustmentOut.innerHTML = `<span class="${statusClass}">Plan Adjustment:</span> ${decision.label}`;
-    }
-
-    function addReading() {
-      const w = parseFloat(document.getElementById("weight").value);
-      const bfRaw = document.getElementById("bodyfat").value;
-      let bf = bfRaw === "" ? null : parseFloat(bfRaw);
-
-      if (!Number.isFinite(w) || w <= 0) {
-        document.getElementById("adjustmentOut").innerHTML = "<span class='status-bad'>Please enter a valid weight.</span>";
-        return;
-      }
-
-      const readings = loadReadings();
-      if (bf === null) {
-        const lastBF = lastSavedBF(readings);
-        if (lastBF !== null) bf = lastBF; // use last saved BF% if available
-      }
-
-      const entry = {
-        date: new Date().toISOString(),
-        weight: w,
-        bf: (Number.isFinite(bf) ? bf : null)
-      };
-
-      readings.push(entry);
-      saveReadings(readings);
-
-      // Clear inputs (keep BF blank if user prefers)
-      document.getElementById("weight").value = "";
-      document.getElementById("bodyfat").value = "";
-
-      renderReadings();
-      renderShopping();
-    }
-
-    function resetReadings() {
-      localStorage.removeItem(STORAGE_KEY);
-      renderReadings();
-      renderShopping();
-      document.getElementById("trendOut").textContent = "";
-      document.getElementById("adjustmentOut").textContent = "";
-    }
-
-    function copyShopping() {
-      const includeGutAddons = document.getElementById("includeGutAddons")?.checked ?? true;
-      const readings = loadReadings();
-      const trend = computeWeeklyTrend(readings);
-      const decision = decideAdjustment(trend);
-
-      const core = coreShoppingList(includeGutAddons);
-      const adj = [];
-      adj.push(`${decision.label} — ${decision.details}`);
-      if (decision.planChanges) adj.push(...decision.planChanges.map(x => `• ${x}`));
-      if (decision.shoppingAdds) adj.push("Shopping tweaks:", ...decision.shoppingAdds.map(x => `• ${x}`));
-
-      const text =
-`TESCO SHOPPING LIST (4 DAYS • NO DINNERS • NO CHICKEN)
-
-CORE:
-${core.map(i => `• ${i}`).join("\n")}
-
-ADJUSTMENTS:
-${adj.map(i => (i.startsWith("•") || i.endsWith(":")) ? i : `• ${i}`).join("\n")}
-`;
-
-      navigator.clipboard.writeText(text)
-        .then(() => {
-          const el = document.getElementById("copyOut");
-          el.textContent = "Copied ✅";
-          setTimeout(() => el.textContent = "", 2000);
-        })
-        .catch(() => {
-          const el = document.getElementById("copyOut");
-          el.textContent = "Copy failed — your browser blocked clipboard access.";
-        });
-    }
-
-    // Thursday session logic (forearm fatigue-aware)
-    function updateThursday() {
-      const f = parseInt(document.getElementById("fatigue").value, 10);
-      const out = document.getElementById("thursdayOut");
-      const fatigue = Number.isFinite(f) ? Math.max(0, Math.min(10, f)) : 4;
-
-      // Chest stays high volume; forearm/grip-heavy work scales down with fatigue.
-      let plan = [];
-      plan.push("<strong>Thursday (Chest volume priority, forearms managed)</strong><br><br>");
-
-      // Core chest (always)
-      plan.push("1) Barbell Bench Press — 4 sets × 6–10 reps (RPE 7–9)<br>");
-      plan.push("2) Incline Dumbbell Press — 4 sets × 8–12 reps<br>");
-      plan.push("3) Cable / Band Fly — 3–4 sets × 12–20 reps (slow stretch)<br>");
-
-      if (fatigue <= 3) {
-        plan.push("4) Pull support (light) — Chest-supported row 3 × 8–12 (straps OK)<br>");
-        plan.push("5) Forearms (hypertrophy) — Wrist curls 3 × 12–20 + Reverse wrist curls 3 × 12–20<br>");
-        plan.push("<br><span class='status-ok'>Fatigue low:</span> You can include direct forearm work today.");
-      } else if (fatigue <= 6) {
-        plan.push("4) Pull support (minimal grip) — Chest-supported row 2–3 × 10–12 (use straps)<br>");
-        plan.push("5) Forearms — <em>Skip heavy grip</em>; do 1–2 light pump sets only OR forearm isometrics 2 × 30–45s<br>");
-        plan.push("<br><span class='status-warn'>Fatigue moderate:</span> Keep grip stress low; prioritise recovery for Friday.");
-      } else {
-        plan.push("4) Pull support — Optional: machine/cable row 2 × 12–15 (straps, very easy) OR skip entirely<br>");
-        plan.push("5) Forearms — <em>Skip</em> direct forearm/grip work today<br>");
-        plan.push("6) Triceps (low grip) — Rope pushdown 3 × 10–15<br>");
-        plan.push("<br><span class='status-bad'>Fatigue high:</span> Protect elbows/forearms. Go chest + triceps only; recover for Friday.");
-      }
-
-      plan.push("<br><br><span class='muted'>Progressive overload:</span> When you hit the top of the rep range on all sets with clean form, add 1.25–2.5 kg next week (or smallest possible increase).");
-
-      out.innerHTML = plan.join("");
-    }
-
-    // Initial render
-    renderReadings();
-    renderShopping();
-    updateThursday();
-  </script>
-</body>
-</html>
+    let lunch = "";
+    if (protein && carb && veg) {
+      lunch = `${protein.label} + ${carb.name} (${carb.portion}) + ${veg}`;
+      if (has("oliveoil")) lunch += ` + olive oil`;
+      if (allowChickpeas && (veg.includes("salad") || veg.includes("salad leaves"))) lunch += ` + chickpeas (optional fibre)`;
