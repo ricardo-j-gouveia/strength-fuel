@@ -1,73 +1,102 @@
 <!DOCTYPE html>
 <html lang="en-GB">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Strength Fuel — Tesco Lean Mass Planner</title>
+  <meta charset="UTF-8">
+  <title>Strength Fuel</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <style>
-    :root { --bg:#f7f7f7; --card:#fff; --text:#1f1f1f; --muted:#666; --line:#ddd; --brand:#111; --ok:#0a7a2f; --warn:#a85b00; --bad:#b00020; }
-    * { box-sizing: border-box; }
-    body { font-family: Arial, Helvetica, sans-serif; background: var(--bg); color: var(--text); margin: 0; }
-    header { background: var(--brand); color:#fff; padding: 1.2rem 1rem; text-align:center; }
-    header h1 { margin: 0 0 .35rem 0; font-size: 1.6rem; }
-    header p { margin: 0; opacity: .9; }
-    main { max-width: 1200px; margin: 0 auto; padding: 1.1rem; display: grid; gap: 1rem; }
-
-    section { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 1rem; }
-    h2 { margin: 0 0 .7rem 0; font-size: 1.2rem; }
-    h3 { margin: .2rem 0 .6rem 0; font-size: 1.05rem; }
-    .sub { margin: -.2rem 0 .8rem 0; color: var(--muted); font-size: .95rem; }
-
-    .grid { display:grid; gap: .8rem; grid-template-columns: repeat(12, 1fr); }
-    .col-12 { grid-column: span 12; }
-    .col-6  { grid-column: span 6; }
-    .col-4  { grid-column: span 4; }
-    .col-3  { grid-column: span 3; }
-    @media (max-width: 980px){ .col-6,.col-4,.col-3 { grid-column: span 12; } }
-
-    label { display:block; font-size: .95rem; margin-bottom: .35rem; }
-    input[type="number"], input[type="text"], select {
-      width: 100%; padding: .6rem .65rem; border: 1px solid var(--line); border-radius: 8px; font-size: 1rem;
-    }
-
-    .row { display:flex; gap: .6rem; flex-wrap: wrap; align-items:center; }
-    button { background: var(--brand); color:#fff; border:0; padding: .65rem .85rem; border-radius: 9px; cursor:pointer; font-weight: 700; }
-    button.secondary { background: #444; }
-    button.ghost { background: transparent; color: var(--brand); border: 1px solid var(--line); }
-
-    .checkgrid { display:grid; grid-template-columns: repeat(2, minmax(0,1fr)); gap: .45rem .8rem; }
-    @media (max-width: 980px){ .checkgrid { grid-template-columns: 1fr; } }
-    .check { display:flex; gap:.55rem; align-items:center; padding:.38rem .45rem; border: 1px solid var(--line); border-radius: 9px; background:#fafafa; }
-    .check input { width:auto; }
-    .muted { color: var(--muted); }
-    .small { font-size: .92rem; }
-    .hr { height:1px; background: var(--line); margin: .9rem 0; }
-
-    table { width: 100%; border-collapse: collapse; background: #fff; border-radius: 8px; overflow: hidden; }
-    th, td { border: 1px solid var(--line); padding: .7rem; text-align: left; vertical-align: top; }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f7f7f7; }
+    header { background: #111; color: #fff; padding: 1rem; text-align: center; }
+    main { max-width: 1000px; margin: auto; padding: 1rem; }
+    section { background: #fff; padding: 1rem; margin-bottom: 1rem; border-radius: 8px; }
+    h2 { margin-top: 0; }
+    label { display: block; margin: .4rem 0; }
+    button { padding: .6rem 1rem; background: #111; color: #fff; border: 0; border-radius: 6px; cursor: pointer; }
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: .5rem; text-align: left; }
     th { background: #eee; }
-
-    .two-col { display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
-    @media (max-width: 980px){ .two-col { grid-template-columns: 1fr; } }
-
-    .status-ok { color: var(--ok); font-weight: 700; }
-    .status-warn { color: var(--warn); font-weight: 700; }
-    .status-bad { color: var(--bad); font-weight: 700; }
-
-    #errorBox { display:none; background:#fff3f3; border:1px solid #ffb3b3; padding:.8rem; border-radius:10px; }
-    #errorBox pre { white-space: pre-wrap; margin:.6rem 0 0 0; font-size:.9rem; color:#7a0012; }
-    footer { text-align:center; padding: 1.2rem 1rem 2rem; color: var(--muted); }
+    ul { margin-left: 1.2rem; }
   </style>
 </head>
 
 <body>
 <header>
   <h1>Strength Fuel</h1>
-  <p>Tesco-only • Lean mass gain • Fibre-first • Plan + shopping generated from your selections</p>
+  <p>Tesco-only • Lean mass gain • Fibre-first</p>
 </header>
 
 <main>
 
-  <section id="errorBox">
-    <strong class="status-bad">Script error (this is why buttons/options don’t work)</strong>
+<section>
+  <h2>Select meats</h2>
+
+  <label><input type="checkbox" id="beef" checked> Beef</label>
+  <label><input type="checkbox" id="pork"> Pork</label>
+  <label><input type="checkbox" id="duck"> Duck</label>
+  <label><input type="checkbox" id="chicken"> Chicken</label>
+  <label><input type="checkbox" id="fish" checked> Fish</label>
+
+  <br>
+  <button onclick="generate()">Generate meal plan</button>
+</section>
+
+<section>
+  <h2>Meal plan (Mon–Fri, no dinners)</h2>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Day</th>
+        <th>Lunch</th>
+      </tr>
+    </thead>
+    <tbody id="meals"></tbody>
+  </table>
+</section>
+
+<section>
+  <h2>Tesco shopping list</h2>
+  <ul id="shopping"></ul>
+</section>
+
+</main>
+
+<script>
+function generate() {
+  var meats = [];
+  if (document.getElementById("beef").checked) meats.push("Tesco 5% Beef Mince");
+  if (document.getElementById("pork").checked) meats.push("Tesco Pork Loin Steaks");
+  if (document.getElementById("duck").checked) meats.push("Tesco Duck Breast Fillets");
+  if (document.getElementById("chicken").checked) meats.push("Tesco Chicken Breast Fillets");
+  if (document.getElementById("fish").checked) meats.push("Tesco Cod or Salmon Fillets");
+
+  var days = ["Monday","Tuesday","Wednesday","Thursday","Friday"];
+  var mealBody = document.getElementById("meals");
+  mealBody.innerHTML = "";
+
+  for (var i = 0; i < days.length; i++) {
+    var protein = meats.length ? meats[i % meats.length] : "Select at least one meat";
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td>" + days[i] + "</td><td>" + protein + " + rice + salad</td>";
+    mealBody.appendChild(tr);
+  }
+
+  var shop = document.getElementById("shopping");
+  shop.innerHTML = "";
+  for (var j = 0; j < meats.length; j++) {
+    var li = document.createElement("li");
+    li.textContent = meats[j];
+    shop.appendChild(li);
+  }
+
+  if (!meats.length) {
+    var li2 = document.createElement("li");
+    li2.textContent = "No meats selected";
+    shop.appendChild(li2);
+  }
+}
+</script>
+
+</body>
+</html>
